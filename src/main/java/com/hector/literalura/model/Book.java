@@ -81,7 +81,7 @@ public class Book {
             }
         }
         return "----- BOOK ------" +
-                "\ntitle: '" + title +
+                "\ntitle: " + title +
                 "\nlanguages: " + (languages != null ? languages.toString() : "[]") +
                 "\ndownloadCount: " + downloadCount +
                 "\nauthors: " + authorsStr +

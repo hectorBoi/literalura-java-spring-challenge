@@ -20,7 +20,6 @@ public class RequestAPI {
             throw new RuntimeException(e);
         }
         String json = response.body();
-        System.out.println(json);
         return json;
     }
 }

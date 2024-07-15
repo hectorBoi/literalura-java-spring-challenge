@@ -123,6 +123,7 @@ public class Principal {
             book.setAuthors(savedAuthors);
             bookRepository.save(book);
             authorRepository.saveAll(savedAuthors);
+            System.out.println(book);
         }catch (IndexOutOfBoundsException e){
             System.out.println("No books found");
         }
