@@ -14,13 +14,12 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class Principal {
-    private Scanner keyboard = new Scanner(System.in);
-    private final String BASE_URL = "https://gutendex.com/books/";
-    private RequestAPI requestAPI = new RequestAPI();
-    private ReceiveData receiveDataObject = new ReceiveData();
+    private final Scanner keyboard = new Scanner(System.in);
+    private final RequestAPI requestAPI = new RequestAPI();
+    private final ReceiveData receiveDataObject = new ReceiveData();
 
-    private BookRepository bookRepository;
-    private AuthorRepository authorRepository;
+    private final BookRepository bookRepository;
+    private final AuthorRepository authorRepository;
 
     public Principal(BookRepository bookRepository, AuthorRepository authorRepository) {
         this.bookRepository = bookRepository;
@@ -46,21 +45,11 @@ public class Principal {
                 keyboard.nextLine();
 
                 switch (selection) {
-                    case 1:
-                        searchBookByName();
-                        break;
-                    case 2:
-                        showSearchedBooks();
-                        break;
-                    case 3:
-                        searchBookByLanguage();
-                        break;
-                    case 4:
-                        searchAuthorsLivingByYear();
-                        break;
-                    default:
-                        System.out.println("Invalid Option");
-                        break;
+                    case 1 -> searchBookByName();
+                    case 2 -> showSearchedBooks();
+                    case 3 -> searchBookByLanguage();
+                    case 4 -> searchAuthorsLivingByYear();
+                    default -> System.out.println("Invalid Option");
                 }
             }catch(InputMismatchException e){
                 System.out.println("Please enter a valid number.");
@@ -90,6 +79,7 @@ public class Principal {
     private BookData getBookData () {
         System.out.println("Type the name of the book you look for:");
         var searchedBook = keyboard.nextLine();
+        String BASE_URL = "https://gutendex.com/books/";
         var json = requestAPI.getData(BASE_URL + "?search=" + searchedBook.replace(" ", "%20"));
         GutendexResponse gutendexResponse = receiveDataObject.obtenerDatos(json, GutendexResponse.class);
         if(gutendexResponse.count() == 0){
@@ -105,7 +95,7 @@ public class Principal {
             BookData data = getBookData();
             Book book = new Book(data);
             Set<Author> authors = data.authors().stream()
-                    .map(a -> new Author(a))
+                    .map(Author::new)
                     .collect(Collectors.toSet());
             Set<Book> books = new HashSet<>();
             books.add(book);
@@ -132,7 +122,7 @@ public class Principal {
             //Add book to authors and authors to book
             book.setAuthors(savedAuthors);
             bookRepository.save(book);
-            savedAuthors.forEach(a -> authorRepository.save(a));
+            authorRepository.saveAll(savedAuthors);
         }catch (IndexOutOfBoundsException e){
             System.out.println("No books found");
         }
@@ -141,7 +131,7 @@ public class Principal {
 
     private void showSearchedBooks() {
         List<Book> books = bookRepository.findAll();
-        books.forEach(book -> System.out.println(book));
+        books.forEach(System.out::println);
     }
 
     private void searchBookByLanguage() {
@@ -154,7 +144,7 @@ public class Principal {
             if(books.isEmpty()){
                 System.out.println("No books found for " + language);
             }else{
-                books.forEach(book -> System.out.println(book));
+                books.forEach(System.out::println);
             }
         }
     }
